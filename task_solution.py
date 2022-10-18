@@ -42,13 +42,13 @@ def password_security(password):
 
     steps = 0   # If the password is already secure, return 0.
 
-    if not any(x.isupper() for x in password):
+    if not any(x.isupper() for x in password):  # upper case check
         steps += 1
 
-    if not any(x.islower() for x in password):
+    if not any(x.islower() for x in password):  # lower case check
         steps += 1
 
-    if not any(x.isdigit() for x in password):
+    if not any(x.isdigit() for x in password):  #
         steps += 1
 
     # Examine repeated consecutive chars
@@ -69,32 +69,41 @@ def password_security(password):
 
     for common_password in common_passwords:  # we can't use common_password changes to disrupt repeated consec values
         if common_password in password:
-            steps += 1  # we need value change to disrupt password
+            steps += 1  # we need a value change to disrupt common password
 
     # Examine Password length
     password_length = len(password) + steps
     if 7 > password_length:
         steps += 7 - password_length
     if password_length > 25:
-        steps += password_length - 25
+        steps = password_length - 25
 
     return steps  # number of steps required to make the password secure
 
 
-def test_password_security_function(func):
+def test_password_security_function(func, test_cases):
     tests_passed = 0
-    test_cases = [("z", 6), ("aA1", 4), ("1377C0d3", 0), ('AB7aaabbbccc', 3), ('aaabbb', 2)]
+    print(f'\nConducting {password_security.__name__} testing with some sample test cases.\n')
     for password, no_required_steps in test_cases:
         result = func(password)
         if no_required_steps == result:
             tests_passed += 1
-            print(f"Passed test case password = {password}, no steps required = {no_required_steps}, ans = {result}")
+            print(f"Passed test case: password={password}, no steps required={no_required_steps}, ans = {result}")
         else:
-            print(f"Failed test case password = {password}, no steps required = {no_required_steps} ans = {result} ")
+            print(f"Failed test case: password={password}, no steps required={no_required_steps} ans = {result} ")
     print(f'\n{tests_passed}/{len(test_cases)} tests passed.')
     pass
 
 
 if __name__ == '__main__':
-    test_password_security_function(password_security)
+
+    cases = [("z", 6), ("aA1", 4), ("1377C0d3", 0), ('AB7aaabbbccc', 3), ('aaabbb', 2), ('ab', 5), ('aaa', 4),
+             ('aaaa', 3), ('12345aaB', 2), ('qwerty', 2), ('aaaBBBcccDDDeeeFFFhhhGGG777', 9)]
+
+    test_password_security_function(password_security, cases)
+
+    # Comments are made after the initial code was written in the 40-60min window (sort of post-assessment)
+    # Weaknesses of password_security(password) will come when we are outside of 7 < len(password) < 25.
+    # The example to look at would be 'qwerty' needs 2 changes (insert digit and insert upper case), but ans = 3
+    # Same holds true for test case 'aaaBBBcccDDDeeeFFFhhhGGG777', we just need to at minimum delete 9
 
